@@ -1,0 +1,34 @@
+🎯 Goal
+
+The goal of this project is to analyze how financial news sentiment influences stock price movements. By combining transformer-based NLP (FinBERT), machine learning models, and generative AI (LLMs), the project explores whether investor sentiment reflected in news articles can help predict stock trends and generate investor-friendly summaries.
+
+⚙️ How it works
+
+Data Collection
+
+Stock price data (AAPL, AMZN) from Yahoo Finance
+
+Financial news articles filtered for those companies
+
+Sentiment Analysis
+
+Use FinBERT (finance-trained transformer) to classify news as Positive, Negative, or Neutral
+
+Aggregate sentiment scores daily for each ticker
+
+Stock Prediction
+
+Merge sentiment with historical stock data
+
+Train machine learning models (e.g., logistic regression, XGBoost) to predict stock returns or movements
+
+Generative AI Summaries
+
+Use LLMs (Watsonx.ai) to automatically create plain-language investor reports from model outputs
+
+Visualization
+
+Build dashboards (Python / IBM Watson Studio) to show trends, correlations, and forecasts
+
+👉 In short:
+The project connects financial news → sentiment → stock prediction → investor summaries → dashboards.
