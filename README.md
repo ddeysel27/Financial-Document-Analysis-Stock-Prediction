@@ -25,40 +25,6 @@ Investor Summaries → Generate natural-language insights using LLMs (Hugging Fa
 
 Analytics Dashboard → Visualize sentiment, predictions, and performance
 
-📂 Project Structure
-genai-financial-doc-analysis/
-│
-├── data/                  # Datasets (ignored in Git)
-│   ├── raw/               # Original datasets (Hugging Face, Kaggle, yfinance)
-│   └── processed/         # Cleaned / merged data
-│
-├── notebooks/             # Jupyter notebooks (week-by-week pipeline)
-│   ├── 01_data_collection.ipynb
-│   ├── 02_preprocessing.ipynb
-│   ├── 03_transformer_sentiment.ipynb
-│   ├── 04_ml_prediction.ipynb
-│   ├── 05_llm_summary_generation.ipynb
-│   ├── 06_dashboard_analysis.ipynb
-│   └── 07_final_demo.ipynb
-│
-├── scripts/               # Modular Python scripts
-│   ├── data_utils.py
-│   ├── sentiment_utils.py
-│   ├── ml_utils.py
-│   └── summary_utils.py
-│
-├── reports/               # Documentation
-│   ├── proposal.md
-│   ├── interim_report.md
-│   └── final_report.md
-│
-├── results/               # Outputs (charts, logs, screenshots)
-│
-├── requirements.txt       # Core dependencies
-├── dev-requirements.txt   # Jupyter + dev tools
-├── README.md              # Project overview
-└── .gitignore             # Ignore venv, data, cache, etc.
-
 
 ⚙️ Setup Instructions
 1. Clone Repository
