@@ -1,0 +1,9 @@
+# Core development tools
+jupyter
+notebook
+ipykernel
+jupyterlab
+
+# Optional but useful
+nbformat
+nbconvert
