@@ -76,9 +76,9 @@ Week 3: Transformer sentiment analysis (FinBERT)
 
 Week 4–5: Stock price prediction (Logistic Regression, XGBoost)
 
-Week 6: LLM investor summary generation (Watsonx.ai)
+Week 6: LLM investor summary generation
 
-Week 7: Analytics dashboard (Watson Studio)
+Week 7: Analytics dashboard
 
 Week 8: Final report & presentation
 
