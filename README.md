@@ -4,26 +4,35 @@ Course Project — Fall 2025
 
 📌 Overview
 
-This project combines transformers (FinBERT), machine learning, and generative AI (LLMs) on IBM Cloud to analyze financial news and market data.
+This project explores the intersection of financial news, market data, and AI.
+We combine:
 
-Pipeline:
+Transformers (FinBERT) for financial sentiment analysis
 
-Financial News Sentiment (transformers)
+Machine Learning for stock price prediction
 
-Stock Price Prediction (machine learning)
+Generative AI (LLMs) for investor-friendly summaries
 
-Investor Summaries (LLMs with Watsonx.ai)
+Dashboards (Watson Studio / Python) for visualization and insights
 
-Analytics Dashboard (Watson Studio / Python)
+🔄 Project Pipeline
+
+Financial News Sentiment → Extract tone from market articles using FinBERT
+
+Stock Price Prediction → Train ML models on sentiment + price data
+
+Investor Summaries → Generate natural-language insights using LLMs (Watsonx.ai)
+
+Analytics Dashboard → Visualize sentiment, predictions, and performance
 
 📂 Project Structure
 genai-financial-doc-analysis/
 │
-├── data/                  # Datasets
-│   ├── raw/               # Original datasets (Kaggle, yfinance)
-│   └── processed/         # Cleaned/merged data
+├── data/                  # Datasets (ignored in Git)
+│   ├── raw/               # Original datasets (Hugging Face, Kaggle, yfinance)
+│   └── processed/         # Cleaned / merged data
 │
-├── notebooks/             # Jupyter notebooks (Week-by-week pipeline)
+├── notebooks/             # Jupyter notebooks (pipeline by week)
 │   ├── 01_data_collection.ipynb
 │   ├── 02_preprocessing.ipynb
 │   ├── 03_transformer_sentiment.ipynb
@@ -32,7 +41,7 @@ genai-financial-doc-analysis/
 │   ├── 06_dashboard_analysis.ipynb
 │   └── 07_final_demo.ipynb
 │
-├── scripts/               # Modular Python scripts
+├── scripts/               # Reusable Python modules
 │   ├── data_utils.py
 │   ├── sentiment_utils.py
 │   ├── ml_utils.py
@@ -72,26 +81,25 @@ source .venv/bin/activate
 
 3. Install Dependencies
 
-Core project packages:
+Core packages:
 
 pip install -r requirements.txt
 
 
-Dev tools (Jupyter, ipykernel):
+Development tools (Jupyter, ipykernel):
 
 pip install -r dev-requirements.txt
 
-4. Register Kernel (for Jupyter/VS Code)
+4. Register Kernel (Jupyter / VS Code)
 python -m ipykernel install --user --name=genai-financial-doc-analysis --display-name "Python (.venv) GenAI"
 
 📊 Data Sources
 
-Financial News Sentiment Dataset (Kaggle):
-https://www.kaggle.com/ankurzing/sentiment-analysis-for-financial-news
+Financial News Sentiment Dataset: Kaggle
 
-Stock Market Data (Yahoo Finance):
-Collected via yfinance
-.
+Stock Market Data: Collected via yfinance
+
+Processed News Dataset: Filtered subset from Hugging Face FNSPID
 
 🚀 Roadmap
 
@@ -99,7 +107,7 @@ Week 1–2: Data collection & preprocessing
 
 Week 3: Transformer sentiment analysis (FinBERT)
 
-Week 4–5: ML prediction (logistic regression, XGBoost)
+Week 4–5: Stock price prediction (Logistic Regression, XGBoost)
 
 Week 6: LLM investor summary generation (Watsonx.ai)
 
@@ -109,13 +117,10 @@ Week 8: Final report & presentation
 
 🛠️ Tech Stack
 
-Python 3.10+
+Language: Python 3.10+
 
 Libraries: pandas, yfinance, scikit-learn, matplotlib, seaborn, transformers, torch
 
-IBM Cloud Services: Watsonx.ai, Watson Machine Learning, Watson Studio
-
 📜 License
 
-MIT License. See LICENSE
- for details.
+This project is released under the MIT License.
