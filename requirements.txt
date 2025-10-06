@@ -1,6 +1,36 @@
-pandas==2.2.3
-numpy==1.26.4
-yfinance==0.2.65
-matplotlib==3.9.2
-seaborn==0.13.2
-scikit-learn==1.5.2
+# Core data science libraries
+pandas>=2.1.0
+numpy>=1.26.0
+scikit-learn>=1.5.0
+matplotlib>=3.8.0
+seaborn>=0.13.0
+
+# Financial data and NLP
+yfinance>=0.2.38
+transformers>=4.41.0
+torch>=2.2.0
+datasets>=2.19.0
+nltk>=3.9
+spacy>=3.7.0
+beautifulsoup4>=4.12.0
+requests>=2.31.0
+tqdm>=4.66.0
+
+# Advanced ML models
+xgboost>=2.1.0
+lightgbm>=4.5.0
+sgboost>=0.1.4  # ✅ Added as requested
+catboost>=1.2.3  # optional alternative boosting model
+
+# Deep learning
+torchvision>=0.17.0
+torchaudio>=2.2.0
+
+# Visualization & dashboard
+streamlit>=1.36.0
+plotly>=5.22.0
+
+# Utilities
+openpyxl>=3.1.2
+python-dotenv>=1.0.1
+joblib>=1.4.2
