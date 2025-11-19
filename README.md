@@ -1,41 +1,43 @@
-📊 Generative AI for Financial Document Analysis
+Generative AI for Financial Document Analysis
 
-Course Project — Fall 2025
+Course Project – Fall 2025
 
-📌 Overview
+Overview
 
-This project explores the intersection of financial news, market data, and AI.
-We combine:
+This project examines how financial news sentiment and market data can be combined with AI models to improve stock movement prediction and investor insights. It includes:
 
-Transformers (FinBERT) for financial sentiment analysis
+Transformer-based sentiment analysis using FinBERT
 
-Machine Learning for stock price prediction
+Machine learning models for stock direction prediction
 
-Generative AI (LLMs) for investor-friendly summaries
+Generative AI models for producing investor-friendly summaries
 
-Dashboards (Python / PowerBi) for visualization and insights
+Dashboards (Python and Power BI) for data visualization and performance reporting
 
-🔄 Project Pipeline
+Project Pipeline
 
-Financial News Sentiment → Extract tone from market articles using FinBERT
+Financial News Sentiment
+Extract sentiment scores from market articles using FinBERT.
 
-Stock Price Prediction → Train ML models on sentiment + price data
+Stock Price Prediction
+Train ML models using combined sentiment features and historical price data.
 
-Investor Summaries → Generate natural-language insights using LLMs (Hugging Face)
+Investor Summary Generation
+Use large language models (Hugging Face) to generate natural-language insights.
 
-Analytics Dashboard → Visualize sentiment, predictions, and performance
+Analytics Dashboard
+Visualize sentiment trends, predictions, and model performance.
 
-
-⚙️ Setup Instructions
-1. Clone Repository
+Setup Instructions
+1. Clone the Repository
 git clone https://github.com/your-username/genai-financial-doc-analysis.git
 cd genai-financial-doc-analysis
 
-2. Create Virtual Environment
+2. Create a Virtual Environment
 python -m venv .venv
 
 
-Activate it:
+Activate the environment:
 
 Windows (PowerShell):
 
@@ -57,37 +59,37 @@ Development tools (Jupyter, ipykernel):
 
 pip install -r dev-requirements.txt
 
-4. Register Kernel (Jupyter / VS Code)
+4. Register the Kernel (optional)
 python -m ipykernel install --user --name=genai-financial-doc-analysis --display-name "Python (.venv) GenAI"
 
-📊 Data Sources
+Data Sources
 
 Financial News Sentiment Dataset: Kaggle
 
-Stock Market Data: Collected via yfinance
+Stock Market Data: Collected using yfinance
 
 Processed News Dataset: Filtered subset from Hugging Face FNSPID
 
-🚀 Roadmap
+Roadmap
 
-Week 1–2: Data collection & preprocessing
+Week 1–2: Data collection and preprocessing
 
-Week 3: Transformer sentiment analysis (FinBERT)
+Week 3: Transformer-based sentiment analysis (FinBERT)
 
-Week 4–5: Stock price prediction (Logistic Regression, XGBoost)
+Week 4–5: Stock direction prediction (Logistic Regression, XGBoost)
 
-Week 6: LLM investor summary generation
+Week 6: LLM-generated investor summaries
 
-Week 7: Analytics dashboard
+Week 7: Analytics dashboard development
 
-Week 8: Final report & presentation
+Week 8: Final report
 
-🛠️ Tech Stack
+Tech Stack
 
 Language: Python 3.10+
 
 Libraries: pandas, yfinance, scikit-learn, matplotlib, seaborn, transformers, torch
 
-📜 License
+License
 
 This project is released under the MIT License.
