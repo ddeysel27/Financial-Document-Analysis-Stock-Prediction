@@ -22,7 +22,7 @@ st.set_page_config(
 #   BACKGROUND (Base64 safe for multipage apps)
 # ---------------------------------------------------------
 from utils.ui import set_background
-set_background("assets/stock.png")     # IMPORTANT: relative to project root
+set_background("assets/stock.png")    
 
 # ---------------------------------------------------------
 #   WELCOME PAGE HTML
@@ -62,15 +62,15 @@ components.html(
 col1, col2, col3 = st.columns(3)
 
 with col1:
-    if st.button("📊 Open Dashboard", use_container_width=True):
-        st.switch_page("pages/1_dashboard.py")
+    if st.button("Open Insights Dashboard", use_container_width=True):
+        st.switch_page("pages/1_Insights_Dashboard.py")
 
 with col2:
-    if st.button("🔍 Analyze Single Day", use_container_width=True):
-        st.switch_page("pages/1_Day_Analysis.py")
+    if st.button("Talk To Our Chatbot", use_container_width=True):
+        st.switch_page("pages/2_Talk_To_Our_LLM.py")
 
 with col3:
-    if st.button("🤖 Chat With LLM", use_container_width=True):
-        st.switch_page("pages/2_llm_chatbot.py")
+    if st.button("Access Articles Of The Day", use_container_width=True):
+        st.switch_page("pages/3_News_Articles.py")
 
 st.markdown("<br><br><br>", unsafe_allow_html=True)
