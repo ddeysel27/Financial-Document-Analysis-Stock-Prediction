@@ -8,7 +8,7 @@ from datetime import datetime, timedelta
 #                   PAGE SETUP
 # =========================================================
 st.set_page_config(page_title="LLM Chatbot", layout="wide")
-st.title("🤖 Chat With The Local LLaMA Model")
+st.title("🤖 Chat With Our Assistant")
 st.write("Ask financial, prediction, or sentiment-based questions. The AI uses your dataset for accurate analysis.")
 
 # =========================================================
@@ -90,11 +90,7 @@ def retrieve_context(user_msg):
 # =========================================================
 #        OLLAMA CALL (STREAMING SAFE)
 # =========================================================
-def ask_ollama(prompt, model="llama3.2"):
-    """
-    Sends prompt to local Ollama LLaMA model.
-    Handles streaming JSON responses safely.
-    """
+def ask_ollama(prompt, model="llama3.2:latest"):
     try:
         response = requests.post(
             "http://localhost:11434/api/generate",
@@ -108,11 +104,7 @@ def ask_ollama(prompt, model="llama3.2"):
             if not line:
                 continue
 
-            try:
-                json_obj = json.loads(line.decode("utf-8"))
-            except Exception as e:
-                return f"⚠️ JSON Parsing Error: {e}\nRaw: {line}"
-
+            json_obj = json.loads(line.decode("utf-8"))
             full_reply += json_obj.get("response", "")
 
             if json_obj.get("done"):
@@ -150,24 +142,24 @@ if user_input:
 
     # Build prompt
     final_prompt = f"""
-You are a financial analysis assistant with access to the user's structured stock dataset.
-This dataset includes OHLC data, model predictions, prediction error, volatility,
-and sentiment (avg_sentiment_score, article_count).
+    You are a financial analysis assistant with access to the user's structured stock dataset.
+    This dataset includes OHLC data, model predictions, prediction error, volatility,
+    and sentiment (avg_sentiment_score, article_count).
 
-Use BOTH the dataset context below AND your own reasoning.
+    Use BOTH the dataset context below AND your own reasoning.
 
-DATA CONTEXT:
-{context}
+    DATA CONTEXT:
+    {context}
 
-USER QUESTION:
-{user_input}
+    USER QUESTION:
+    {user_input}
 
-TASK:
-Analyze market behavior, sentiment, and prediction accuracy.
-Compare sentiment to price direction when relevant.
-Explain your reasoning clearly and cite specific numbers from the DATA CONTEXT.
-Provide a helpful and concise financial answer.
-"""
+    TASK:
+    Analyze market behavior, sentiment, and prediction accuracy.
+    Compare sentiment to price direction when relevant.
+    Explain your reasoning clearly and cite specific numbers from the DATA CONTEXT.
+    Provide a helpful and concise financial answer.
+    """
 
     with st.spinner("Thinking..."):
         ai_response = ask_ollama(final_prompt)

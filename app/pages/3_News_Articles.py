@@ -6,7 +6,7 @@ from datetime import datetime
 # PAGE CONFIG
 # ------------------------------------------------------------
 st.set_page_config(page_title="News Articles", layout="wide")
-st.title("📰 News Articles & Summaries")
+st.title("News Articles & Summaries")
 st.write("Browse news articles aligned with your model's test period.")
 
 # ------------------------------------------------------------
@@ -17,7 +17,7 @@ try:
     test_df = pd.read_csv("data/testing_predictions_clean.csv")
     test_df["Date"] = pd.to_datetime(test_df["Date"], errors="coerce")
 except:
-    st.error("❌ Could not load testing_predictions_clean.csv")
+    st.error("Could not load testing_predictions_clean.csv")
     st.stop()
 
 test_min = test_df["Date"].min().date()
@@ -30,7 +30,7 @@ try:
     )
     news_df["Date"] = pd.to_datetime(news_df["Date"], errors="coerce")
 except Exception as e:
-    st.error(f"❌ Could not load news dataset: {e}")
+    st.error(f"Could not load news dataset: {e}")
     st.stop()
 
 # ------------------------------------------------------------
@@ -83,7 +83,7 @@ if df_day.empty:
     st.info("No articles found for this date.")
     st.stop()
 
-st.subheader(f"🗞 Articles for **{selected_ticker}** on **{selected_date}**")
+st.subheader(f"Articles for **{selected_ticker}** on **{selected_date}**")
 
 # ------------------------------------------------------------
 # SENTIMENT BADGE HELPER
@@ -141,26 +141,26 @@ for idx, row in df_day.iterrows():
         st.markdown(" • ".join(meta))
 
     # Full article text
-    with st.expander("📄 Full Article"):
+    with st.expander("Full Article"):
         st.write(row["Article"])
 
     # Summary expanders
-    st.markdown("#### 🔍 Summaries")
+    st.markdown("#### Summaries")
 
     if pd.notna(row["Lsa_summary"]):
-        with st.expander("🧠 LSA Summary"):
+        with st.expander("- LSA Summary"):
             st.write(row["Lsa_summary"])
 
     if pd.notna(row["Luhn_summary"]):
-        with st.expander("📚 Luhn Summary"):
+        with st.expander("- Luhn Summary"):
             st.write(row["Luhn_summary"])
 
     if pd.notna(row["Textrank_summary"]):
-        with st.expander("🕸 TextRank Summary"):
+        with st.expander("- TextRank Summary"):
             st.write(row["Textrank_summary"])
 
     if pd.notna(row["Lexrank_summary"]):
-        with st.expander("📈 LexRank Summary"):
+        with st.expander("- LexRank Summary"):
             st.write(row["Lexrank_summary"])
 
 st.markdown("---")

@@ -62,7 +62,7 @@ baseline_price = actual_price * (1 + expected_return)
 # --------------------------------------------------
 # Scenario controls
 # --------------------------------------------------
-st.subheader(f"🎯 Scenario Controls for {ticker} on {base_date}")
+st.subheader(f"Scenario Controls for {ticker} on {base_date}")
 
 col1, col2 = st.columns(2)
 
@@ -119,7 +119,7 @@ st.info(f"Scenario Selected: **{scenario_type}** — {scenario_info[scenario_typ
 # --------------------------------------------------
 # How the scenario modifies the price
 # --------------------------------------------------
-st.markdown("### 🧮 How This Simulator Adjusts the Price")
+st.markdown("### How This Simulator Adjusts the Price")
 st.caption(
     "We start from the model-implied expected price (using P(UP) and historical volatility), "
     "then adjust it with sentiment, price, and volatility shocks. "
@@ -160,7 +160,7 @@ prob_above_actual = (simulated_prices > actual_price).mean() * 100
 # --------------------------------------------------
 # Summary metrics
 # --------------------------------------------------
-st.markdown("### 📌 Baseline vs Scenario Summary")
+st.markdown("### Baseline vs Scenario Summary")
 
 m1, m2, m3 = st.columns(3)
 m1.metric("Actual Close", f"${actual_price:,.2f}")

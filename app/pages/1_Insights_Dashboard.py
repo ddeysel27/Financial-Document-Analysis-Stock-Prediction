@@ -39,7 +39,7 @@ df = load_predictions()
 # 2) Sidebar Controls
 # ==============================================================
 
-st.title("📅 Single-Day Directional Prediction & Range Analysis")
+st.title("Single-Day Directional Prediction & Range Analysis")
 
 tickers = sorted(df["Ticker"].unique().tolist())
 ticker = st.sidebar.selectbox("Select Ticker", tickers)
@@ -102,12 +102,13 @@ if prev_close is None:
 else:
     true_label = 1 if actual_dir == "UP" else 0
     calib_error = abs(prob_up - true_label)
+st.markdown("---")
 
 # ==============================================================
 # 4) Single-Day Overview Metrics
 # ==============================================================
 
-st.subheader(f"📊 Single-Day Insights for {ticker} on {selected_date}")
+st.subheader(f"Single-Day Insights for {ticker} on {selected_date}")
 
 c1, c2, c3, c4 = st.columns(4)
 
@@ -149,11 +150,13 @@ c4.metric(
     help="Model's estimated probability that the next day's price will move UP."
 )
 
+
+st.markdown("---")
 # ==============================================================
 # 5) Directional Prediction Explanation
 # ==============================================================
 
-st.markdown("### 🔍 Directional Prediction")
+st.markdown("### Directional Prediction")
 st.caption(
     "The model predicts whether the next closing price will move UP or DOWN "
     "relative to the previous day and provides a probability for that UP move."
@@ -179,80 +182,177 @@ else:
             f"(0 = perfect, 0.5 ≈ random guess in a binary setting)."
         )
 
+st.markdown("---")
 # ==============================================================
 # 6) Price Context (±3 Days)
 # ==============================================================
+import plotly.graph_objects as go
+import pandas as pd
 
-st.markdown("### 📉 Price Context (±3 Days)")
-st.caption(
-    "Shows how the closing price evolved around the selected date. "
-    "The vertical red line marks the selected day."
-)
+# -----------------------------
+# 1. CLEAN DATE COLUMN
+# -----------------------------
+df["Date"] = pd.to_datetime(df["Date"], errors="coerce")
+df = df.dropna(subset=["Date"]).copy()
 
-context = df_ticker.copy()
-context["date_only"] = context["Date"].dt.date
+# -----------------------------
+# 2. FILTER BY TICKER FIRST
+# -----------------------------
+df_tkr = df[df["Ticker"] == ticker].copy()
 
-pos_list = context.index[context["date_only"] == selected_date].tolist()
+# Remove bad rows
+df_tkr = df_tkr.dropna(subset=["Open", "High", "Low", "Close"])
 
-if not pos_list:
-    st.warning("No neighboring context available for this date.")
+# Ensure timezones removed
+if df_tkr["Date"].dt.tz is not None:
+    df_tkr["Date"] = df_tkr["Date"].dt.tz_localize(None)
+
+# Sort by date
+df_tkr = df_tkr.sort_values("Date").reset_index(drop=True)
+
+# -----------------------------
+# 3. FIX selected_date
+# -----------------------------
+selected_date = pd.to_datetime(selected_date)
+
+# -----------------------------
+# 4. WINDOW SELECTION
+# -----------------------------
+window = 3
+start_date = selected_date - pd.Timedelta(days=window)
+end_date   = selected_date + pd.Timedelta(days=window)
+
+price_window = df_tkr[
+    (df_tkr["Date"] >= start_date) &
+    (df_tkr["Date"] <= end_date)
+].copy()
+
+if price_window.empty:
+    st.warning("No price data in this window.")
 else:
-    idx = pos_list[0]
-    start = max(context.index.min(), idx - 3)
-    end = min(context.index.max(), idx + 3)
 
-    chart_df = context.loc[start:end].copy()
+    # -----------------------------
+    # 5. CANDLESTICK FIGURE
+    # -----------------------------
+    fig_candle = go.Figure()
 
-    base = alt.Chart(chart_df).encode(x="Date:T")
+    fig_candle.add_trace(go.Candlestick(
+        x=price_window["Date"],
+        open=price_window["Open"],
+        high=price_window["High"],
+        low=price_window["Low"],
+        close=price_window["Close"],
+        increasing_line_color="#26a69a",
+        decreasing_line_color="#ef5350",
+        name="Candles"
+    ))
 
-    price_line = base.mark_line(color="#1f77b4", strokeWidth=3).encode(
-        y=alt.Y("Close:Q", title="Close Price ($)"),
-        tooltip=["Date:T", "Close:Q"]
+    # -----------------------------
+    # 6. TRUE vertical line over candle range
+    # -----------------------------
+    y_min = price_window["Low"].min()
+    y_max = price_window["High"].max()
+
+    fig_candle.add_shape(
+        type="line",
+        x0=selected_date,
+        x1=selected_date,
+        y0=y_min,
+        y1=y_max,
+        line=dict(color="yellow", width=2, dash="dash"),
+        xref="x",
+        yref="y"
     )
 
-    marker = alt.Chart(
-        pd.DataFrame({"Date": [row["Date"]]})
-    ).mark_rule(
-        color="red",
-        strokeWidth=2,
-        strokeDash=[5, 3]
-    ).encode(x="Date:T")
-
-    st.altair_chart(
-        (price_line + marker).properties(height=320),
-        use_container_width=True
+    fig_candle.add_annotation(
+        x=selected_date,
+        y=y_max,
+        text="Selected",
+        showarrow=False,
+        font=dict(color="yellow"),
+        yshift=8
     )
 
+    # -----------------------------
+    # 7. LAYOUT
+    # -----------------------------
+    fig_candle.update_layout(
+        title=f"Candlestick Chart (±{window} Days Around {selected_date.date()})",
+        template="plotly_dark",
+        xaxis_title="Date",
+        yaxis_title="Price ($)",
+        height=350,
+        margin=dict(l=10, r=10, t=50, b=20),
+        xaxis_rangeslider_visible=False
+    )
+
+    st.plotly_chart(fig_candle, use_container_width=True)
+
+st.markdown("---")
 # ==============================================================
 # 7) Volatility Context (7-Day Rolling Std of Returns)
 # ==============================================================
 
-st.markdown("### 📈 Volatility Context (7-Day Rolling)")
+import plotly.express as px
+import pandas as pd
+
+st.markdown("### 💵 Volatility in Dollar Terms (Last 7 Days)")
 st.caption(
-    "Higher volatility means larger day-to-day price swings, which usually makes "
-    "directional prediction harder."
+    "Shows how much the stock moved each day in dollar terms. "
+    "Useful for understanding market turbulence around the selected date."
 )
 
-df_vol = df_ticker.sort_values("Date").reset_index(drop=True)
-df_vol["DailyRet"] = df_vol["Close"].pct_change()
-df_vol["RollingVol"] = df_vol["DailyRet"].rolling(7).std()
+# Ensure correct datetime
+df_daily = df_ticker.copy()
+df_daily["Date"] = pd.to_datetime(df_daily["Date"], errors="coerce")
+df_daily = df_daily.sort_values("Date").reset_index(drop=True)
 
-vol_values = df_vol.loc[df_vol["Date"].dt.date == selected_date, "RollingVol"].values
+# Compute daily dollar volatility
+df_daily["DollarVol"] = (df_daily["Close"] - df_daily["Close"].shift(1)).abs()
 
-if len(vol_values) == 0 or pd.isna(vol_values[0]):
-    st.info("Not enough history to compute 7-day volatility for this date.")
+# Convert selected_date properly
+selected_date = pd.to_datetime(selected_date).date()
+
+# Filter last 7 days BEFORE selected date
+window_data = df_daily[df_daily["Date"].dt.date < selected_date].tail(7).copy()
+
+if window_data.empty:
+    st.info("Not enough data to compute 7-day volatility window.")
 else:
+    # Metric for the most recent day in window
+    recent_vol = window_data["DollarVol"].iloc[-1]
+
     st.metric(
-        "7-Day Rolling Volatility (Return Std)",
-        f"{vol_values[0] * 100:,.2f}%",
-        help="Standard deviation of daily returns over the last 7 days."
+        "Most Recent Daily Dollar Volatility",
+        f"${recent_vol:,.2f}",
+        help="Absolute difference between today's close and previous day's close."
     )
+
+    # Bar chart for the last 7 days
+    fig_vol = px.bar(
+        window_data,
+        x="Date",
+        y="DollarVol",
+        title="Daily Dollar Volatility (|Close - Previous Close|)",
+        labels={"DollarVol": "Dollar Volatility ($)", "Date": "Date"},
+        template="plotly_dark",
+    )
+
+    fig_vol.update_layout(
+        height=300,
+        xaxis_title="Date",
+        yaxis_title="Volatility ($)",
+        margin=dict(l=10, r=10, t=50, b=10)
+    )
+
+    st.plotly_chart(fig_vol, use_container_width=True)
+
 
 # ==============================================================
 # 8) Qualitative Confidence from Probability
 # ==============================================================
 
-st.markdown("### 🎯 Qualitative Confidence")
+st.markdown("### Qualitative Confidence")
 st.caption(
     "Translates the UP probability into a simple High / Medium / Low "
     "confidence tag for easier interpretation."
@@ -267,61 +367,106 @@ else:
 
 st.metric(conf_label, f"P(UP) = {prob_up * 100:,.1f}%")
 
+st.markdown("---")
+
 # ==============================================================
 # 9) Recent Directional Performance (Last 7 Records)
 # ==============================================================
 
-st.markdown("### 📊 Recent Directional Performance (Last 7 Records)")
+st.markdown("### Recent Directional Performance (Last 7 Records)")
 st.caption(
-    "Looks at the last few predictions for this ticker and shows how often "
-    "the model was correct, as well as the returns on those days."
+    "Shows the last few predictions for this ticker, including actual market moves, "
+    "predicted direction, and whether the model was correct."
 )
 
+# -------------------------------------------------------------------
+# Step 1: Prepare dataframe sorted by date
+# -------------------------------------------------------------------
 perf_df = df_ticker.copy().sort_values("Date").reset_index(drop=True)
 
-# Compute actual direction vs previous close
+# Previous close (needed for returns)
 perf_df["PrevClose"] = perf_df["Close"].shift(1)
 perf_df = perf_df.dropna(subset=["PrevClose"]).copy()
 
+# -------------------------------------------------------------------
+# Step 2: Compute actual + predicted directions
+# -------------------------------------------------------------------
 perf_df["ActualDir"] = np.where(perf_df["Close"] > perf_df["PrevClose"], 1, 0)
 perf_df["PredDir"] = perf_df["Prediction"].astype(int)
 perf_df["Correct"] = perf_df["ActualDir"] == perf_df["PredDir"]
 
-# Slice to last 7 observations up to the selected date
+# Labels for tooltip readability
+perf_df["ActualDirectionLabel"] = perf_df["ActualDir"].map({1: "Up", 0: "Down"})
+perf_df["PredDirectionLabel"] = perf_df["PredDir"].map({1: "Up", 0: "Down"})
+perf_df["CorrectLabel"] = perf_df["Correct"].map({True: "Correct", False: "Incorrect"})
+
+# -------------------------------------------------------------------
+# Step 3: Compute returns + rounded values
+# -------------------------------------------------------------------
+# Ensure Return column exists
+if "Return" not in perf_df.columns or perf_df["Return"].isna().all():
+    perf_df["Return"] = (
+        (perf_df["Close"] - perf_df["PrevClose"]) / perf_df["PrevClose"]
+    )
+
+perf_df["DailyReturnPct"] = perf_df["Return"] * 100.0
+perf_df["DailyReturnPctRounded"] = perf_df["DailyReturnPct"].round(2)
+
+# Dollar movement
+perf_df["ActualMovement"] = perf_df["Close"] - perf_df["PrevClose"]
+perf_df["ActualMovementRounded"] = perf_df["ActualMovement"].round(2)
+
+# -------------------------------------------------------------------
+# Step 4: Slice the last 7 rows up to selected date
+# -------------------------------------------------------------------
 perf_df = perf_df[perf_df["Date"] <= row["Date"]].tail(7)
 
 if perf_df.empty:
     st.info("Not enough observations to evaluate recent performance.")
 else:
+
+    # ---------------------------------------------------------------
+    # Step 5: Display recent accuracy metric
+    # ---------------------------------------------------------------
     recent_acc = perf_df["Correct"].mean() * 100.0
     st.metric("Last-7 Directional Accuracy", f"{recent_acc:.1f}%")
 
-    # Ensure we have a return column for the scatter
-    if "Return" not in perf_df.columns or perf_df["Return"].isna().all():
-        perf_df["Return"] = (
-            (perf_df["Close"] - perf_df["PrevClose"]) / perf_df["PrevClose"]
+    # ---------------------------------------------------------------
+    # Step 6: Plot scatter chart with detailed tooltips
+    # ---------------------------------------------------------------
+    scatter = (
+        alt.Chart(perf_df)
+        .mark_circle(size=90)
+        .encode(
+            x="Date:T",
+            y=alt.Y("DailyReturnPct:Q", title="Daily Return (%)"),
+            color=alt.Color(
+                "Correct:N",
+                scale=alt.Scale(domain=[True, False], range=["#2ca02c", "#d62728"]),
+                legend=alt.Legend(title="Prediction Correct?")
+            ),
+            tooltip=[
+                alt.Tooltip("Date:T", title="Date"),
+                alt.Tooltip("DailyReturnPctRounded:Q", title="Daily Return (%)"),
+                alt.Tooltip("ActualMovementRounded:Q", title="Price Change ($)"),
+                alt.Tooltip("ActualDirectionLabel:N", title="Actual Direction"),
+                alt.Tooltip("PredDirectionLabel:N", title="Predicted Direction"),
+                alt.Tooltip("CorrectLabel:N", title="Outcome")
+            ]
         )
-
-    perf_df["DailyReturnPct"] = perf_df["Return"] * 100.0
-
-    scatter = alt.Chart(perf_df).mark_circle(size=80).encode(
-        x="Date:T",
-        y=alt.Y("DailyReturnPct:Q", title="Daily Return (%)"),
-        color=alt.Color(
-            "Correct:N",
-            scale=alt.Scale(domain=[True, False], range=["#2ca02c", "#d62728"]),
-            legend=alt.Legend(title="Prediction Correct?")
-        ),
-        tooltip=["Date:T", "DailyReturnPct:Q", "Correct:N"]
-    ).properties(height=220)
+        .properties(height=250)
+    )
 
     st.altair_chart(scatter, use_container_width=True)
+
+
+st.markdown("---")
 
 # ==============================================================
 # 10) Multi-Day Accuracy & Simple Strategy Evaluation
 # ==============================================================
 
-st.markdown("## 📅 Multi-Day Accuracy Analysis")
+st.markdown("## Multi-Day Accuracy Analysis")
 st.caption(
     "Choose a date range to evaluate the model's directional accuracy and compare a "
     """Strategy Cumulative Return
@@ -398,7 +543,7 @@ else:
         range_df["StrategyCurve"] = (1 + range_df["StrategyReturn"]).cumprod() - 1
         range_df["BuyHoldCurve"] = (1 + range_df["BuyHoldReturn"]).cumprod() - 1
 
-        st.markdown("### 📊 Range-Level Metrics")
+        st.markdown("### Range-Level Metrics")
 
         m1, m2, m3, m4 = st.columns(4)
         m1.metric("Directional Accuracy", f"{dir_acc:.2f}%")
