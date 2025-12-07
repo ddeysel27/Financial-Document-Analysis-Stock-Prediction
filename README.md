@@ -1,7 +1,5 @@
 Generative AI for Financial Document Analysis
 
-Course Project – Fall 2025
-
 Overview
 
 This project examines how financial news sentiment and market data can be combined with AI models to improve stock movement prediction and investor insights. It includes:
