@@ -15,13 +15,10 @@ output:
 
 # Title Page
 
-\newpage
-
 # Abstract
 
 This report presents an integrated financial prediction system that combines natural language processing, sentiment analysis, market data engineering, and machine learning models to predict short-term stock price movements. Using the FNSPID financial news dataset and daily OHLCV stock data for AAPL, MSFT, AMZN, and GOOG, the study evaluates whether transformer-based sentiment scoring improves directional forecasting. FinBERT, a domain-specific BERT model optimized for financial language, is applied to news summaries and full articles to derive sentiment labels and confidence scores. These signals are aggregated and merged with technical indicators to build a hybrid predictive feature set. The system includes an interactive Streamlit dashboard and an LLM assistant for exploratory interpretation. Results demonstrate that sentiment-enhanced modeling is feasible and provides meaningful predictive insights, although limitations remain regarding sparsity, noise, and feature interactions.
 
-\newpage
 
 # 1. Introduction
 
