@@ -59,17 +59,26 @@ components.html(
 # ---------------------------------------------------------
 #   NAV BUTTONS
 # ---------------------------------------------------------
-col1, col2, col3 = st.columns(3)
+col1, col2, col3, col4 = st.columns(4)
+
+page = st.sidebar.radio(
+    "Navigate",
+    ["Investing Dashboard", "Budget & Cash Flow"]
+)
 
 with col1:
+    if st.button("Open Budget Analyzer", use_container_width=True):
+        st.switch_page("pages/0_Budget_Tracker.py")
+
+with col2:
     if st.button("Open Insights Dashboard", use_container_width=True):
         st.switch_page("pages/1_Insights_Dashboard.py")
 
-with col2:
+with col3:
     if st.button("Talk To Our Chatbot", use_container_width=True):
         st.switch_page("pages/2_Talk_To_Our_LLM.py")
 
-with col3:
+with col4:
     if st.button("Access Articles Of The Day", use_container_width=True):
         st.switch_page("pages/3_News_Articles.py")
 
